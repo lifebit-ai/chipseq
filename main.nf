@@ -106,6 +106,12 @@ params.bwa_index = params.genome ? params.genomes[ params.genome ].bwa ?: false 
 params.gtf = params.genome ? params.genomes[ params.genome ].gtf ?: false : false
 params.blacklist = params.genome ? params.genomes[ params.genome ].blacklist ?: false : false
 
+//Modified for D. support
+params.reads=""
+params.readsExtension="fastq.gz"
+allReads="${params.reads}/*_{1,2}.${params.readsExtension}"
+
+
 // R library locations
 params.rlocation = false
 if (params.rlocation){
@@ -169,7 +175,7 @@ if(params.readPaths){
     }
 } else {
     Channel
-        .fromFilePairs( params.reads, size: params.singleEnd ? 1 : 2 )
+        .fromFilePairs( allReads, size: params.singleEnd ? 1 : 2 )
         .ifEmpty { exit 1, "Cannot find any reads matching: ${params.reads}\nNB: Path needs to be enclosed in quotes!\nIf this is single-end data, please specify --singleEnd on the command line." }
         .into { raw_reads_fastqc; raw_reads_trimgalore }
 }
